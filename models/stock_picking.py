@@ -7,12 +7,19 @@ class StockPicking(models.Model):
     def send_to_fastapi(self):
         for picking in self:
             payload = {
-                'picking_id': picking.id,
-                'origin': picking.origin,
-                'partner_id': picking.partner_id.id if picking.partner_id else None,
-                'location_id': picking.location_id.id if picking.location_id else None,
-                'location_dest_id': picking.location_dest_id.id if picking.location_dest_id else None,
-                # Add more fields as necessary
+            'picking_name': picking.name,
+            'origin': picking.origin,
+            'partner': {
+                'id': picking.partner_id.id if picking.partner_id else None,
+                'name': picking.partner_id.name if picking.partner_id else None,
+                'street': picking.partner_id.street if picking.partner_id else None,
+                'zip': picking.partner_id.zip if picking.partner_id else None,
+                'city': picking.partner_id.city if picking.partner_id else None,
+                'country': picking.partner_id.country_id.name if picking.partner_id and picking.partner_id.country_id else None,
+            },
+            'location': picking.location_id.name if picking.location_id else None,
+            'location_dest': picking.location_dest_id.name if picking.location_dest_id else None,
+            # Add more fields as necessary
             }
             try:
                 response = requests.post(
